@@ -4,6 +4,12 @@ DEFINES		*= MUMBLE
 TEMPLATE	= app
 TARGET		= mumble
 
+phonion {
+    TEMPLATE = lib
+    DEFINES += PHONION
+    HEADER *= SetupMumble.h
+}
+
 CONFIG(static) {
   # On Windows, building a static client
   # means building the main app into a DLL.

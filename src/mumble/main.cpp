@@ -77,6 +77,7 @@ namespace boost {
 extern void os_init();
 extern char *os_lang;
 
+#ifndef PHONION
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0) && defined(Q_OS_WIN)
 # define QAPP_INHERIT_EVENT_FILTER , public QAbstractNativeEventFilter
 #else
@@ -118,6 +119,7 @@ bool QAppMumble::event(QEvent *e) {
 	}
 	return QApplication::event(e);
 }
+#endif
 
 #ifdef Q_OS_WIN
 # if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
@@ -166,11 +168,15 @@ bool QAppMumble::winEventFilter(MSG *msg, long *result) {
 # endif
 #endif
 
+#if defined(PHONION)
+int setupMumble(QApplication& a, int argc, char **argv) {
+#else
 #if defined(Q_OS_WIN) && !defined(QT_NO_DEBUG)
 extern "C" _declspec(dllexport) int main(int argc, char **argv) {
 #else
 int main(int argc, char **argv) {
 #endif
+#endif // PHONION
 	int res = 0;
 
 	QT_REQUIRE_VERSION(argc, argv, "4.4.0");
@@ -183,16 +189,20 @@ int main(int argc, char **argv) {
 #endif
 #endif
 
+#ifndef PHONION
 	// Initialize application object.
 	QAppMumble a(argc, argv);
 	a.setApplicationName(QLatin1String("Mumble"));
 	a.setOrganizationName(QLatin1String("Mumble"));
 	a.setOrganizationDomain(QLatin1String("mumble.sourceforge.net"));
 	a.setQuitOnLastWindowClosed(false);
+#endif // PHONION
 
+#ifndef PHONION
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0) && defined(Q_OS_WIN)
 	a.installNativeEventFilter(&a);
 #endif
+#endif // PHONION
 
 	#ifdef USE_SBCELT
 	{
@@ -421,18 +431,25 @@ int main(int argc, char **argv) {
 	a.processEvents();
 
 	// Main Window
+#ifndef PHONION
 	g.mw=new MainWindow(NULL);
 	g.mw->show();
+#endif
 
+// Not working in Phonion yet.
+#ifndef PHONION
 #ifdef USE_DBUS
 	new MumbleDBus(g.mw);
 	QDBusConnection::sessionBus().registerObject(QLatin1String("/"), g.mw);
 	QDBusConnection::sessionBus().registerService(QLatin1String("net.sourceforge.mumble.mumble"));
 #endif
+#endif
 
 	SocketRPC *srpc = new SocketRPC(QLatin1String("Mumble"));
 
+#ifndef PHONION
 	g.l->log(Log::Information, MainWindow::tr("Welcome to Mumble."));
+#endif
 
 	// Plugins
 	g.p = new Plugins(NULL);
@@ -440,7 +457,9 @@ int main(int argc, char **argv) {
 
 	Audio::start();
 
+#ifndef PHONION
 	a.setQuitOnLastWindowClosed(false);
+#endif
 
 	// Configuration updates
 	bool runaudiowizard = false;
@@ -459,11 +478,13 @@ int main(int argc, char **argv) {
 		}
 	}
 
+#ifndef PHONION
 	if (runaudiowizard) {
 		AudioWizard *aw = new AudioWizard(g.mw);
 		aw->exec();
 		delete aw;
 	}
+#endif
 
 	g.s.uiUpdateCounter = 2;
 
@@ -481,6 +502,7 @@ int main(int argc, char **argv) {
 			if (CertWizard::validateCert(kp))
 				g.s.kpCertificate = kp;
 		}
+#ifndef PHONION
 		if (! CertWizard::validateCert(g.s.kpCertificate)) {
 			CertWizard *cw = new CertWizard(g.mw);
 			cw->exec();
@@ -494,6 +516,7 @@ int main(int argc, char **argv) {
 				}
 			}
 		}
+#endif
 	}
 
 	if (QDateTime::currentDateTime().daysTo(g.s.kpCertificate.first.first().expiryDate()) < 14)
@@ -508,7 +531,9 @@ int main(int argc, char **argv) {
 	new VersionCheck(false, g.mw, true);
 #endif
 #else
+#ifndef PHONION
 	g.mw->msgBox(MainWindow::tr("Skipping version check in debug mode."));
+#endif
 #endif
 	if (g.s.bPluginCheck) {
 		g.p->checkUpdates();
@@ -523,12 +548,20 @@ int main(int argc, char **argv) {
 		qApp->postEvent(g.mw, oue);
 #endif
 	} else {
+        // (Phonion) No mw.
+#ifndef PHONION
 		g.mw->on_qaServerConnect_triggered(true);
+#endif
 	}
 
+#ifndef PHONION
 	if (! g.bQuit)
 		res=a.exec();
 
+    /**
+     * Put cleanup routines in it's own function so it can be
+     * called from Phonion.
+     */
 	g.s.save();
 
 	ServerHandlerPtr sh = g.sh;
@@ -577,6 +610,8 @@ int main(int argc, char **argv) {
 #endif
 #endif
 	return res;
+#endif // PHONION
+    return 0;
 }
 
 #if defined(Q_OS_WIN) && defined(QT_NO_DEBUG)

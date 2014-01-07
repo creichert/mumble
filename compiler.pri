@@ -107,6 +107,10 @@ unix {
 		QMAKE_CFLAGS *= -O3 -march=native -ffast-math -ftree-vectorize -fprofile-use
 		QMAKE_CXXFLAGS *= -O3 -march=native -ffast-math -ftree-vectorize -fprofile-use
 	}
+	phonion {
+		QMAKE_CFLAGS   -= -fvisibility=hidden
+		QMAKE_CXXFLAGS -= -fvisibility=hidden
+	}
 }
 
 unix:!macx {

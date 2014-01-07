@@ -73,3 +73,9 @@ CONFIG(release, debug|release) {
   QMAKE_LIBDIR += ../../release
   DESTDIR	= ../../release
 }
+
+phonion {
+  rpi {
+    QMAKE_LIBDIR += /mnt/rasp-pi-rootfs/usr/lib
+  }
+}

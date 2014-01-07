@@ -1,6 +1,7 @@
 Makefile
 Makefile.Debug
 Makefile.Release
+Makefile.main
 debug/
 release/
 asio/
@@ -18,6 +19,7 @@ indent.sh
 *.pro.user
 ui_*.h
 *.qm
+.clang_complete
 installer/Mumble.exe
 overlay/*.hex
 scripts/Murmur.ice

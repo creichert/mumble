@@ -156,7 +156,11 @@ bool NetworkConfig::TcpModeEnabled() {
 	 * itself already is a potential latency killer.
 	 */
 
+#ifdef PHONION
+	return true;
+#else
 	return g.s.ptProxyType != Settings::NoProxy || g.s.bTCPCompat;
+#endif // PHONION
 }
 
 void NetworkConfig::accept() const {

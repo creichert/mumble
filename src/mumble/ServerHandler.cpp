@@ -306,7 +306,9 @@ void ServerHandler::run() {
 	connect(ticker, SIGNAL(timeout()), this, SLOT(sendPing()));
 	ticker->start(5000);
 
+#ifndef PHONION
 	g.mw->rtLast = MumbleProto::Reject_RejectType_None;
+#endif // PHONION
 
 	accUDP = accTCP = accClean;
 
@@ -385,6 +387,11 @@ void ServerHandler::setSslErrors(const QList<QSslError> &errors) {
 		}
 	}
 #endif
+
+#ifdef PHONION
+	qDebug() << "SSL Errors: " << newErrors;
+	connection->proceedAnyway();
+#endif // PHONION
 
 	bStrong = false;
 	if ((qscCert.size() > 0)  && (QString::fromLatin1(qscCert.at(0).digest(QCryptographicHash::Sha1).toHex()) == Database::getDigest(qsHostName, usPort)))
