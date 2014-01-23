@@ -1,4 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
+<!--
 <qresource>
  <file>qt_cs.qm</file>
  <file>qt_da.qm</file>
@@ -18,4 +19,5 @@
  <file>qt_zh_CN.qm</file>
  <file>qt_zh_TW.qm</file>
 </qresource>
+-->
 </RCC>
