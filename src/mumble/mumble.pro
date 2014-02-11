@@ -453,4 +453,8 @@ lrel.variable_out = rcc.depends
 
 QMAKE_EXTRA_COMPILERS *= lrel
 
+phonion {
+  RESOURCES =
+}
+
 include(../../symbols.pri)
