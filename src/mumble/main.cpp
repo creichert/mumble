@@ -431,9 +431,11 @@ int main(int argc, char **argv) {
 	a.processEvents();
 
 	// Main Window
-#ifndef PHONION
 	g.mw=new MainWindow(NULL);
+#ifndef PHONION
 	g.mw->show();
+#else
+    g.mw->hide();
 #endif
 
 // Not working in Phonion yet.

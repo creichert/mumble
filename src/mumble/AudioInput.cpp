@@ -796,6 +796,10 @@ void AudioInput::encodeAudioFrame() {
 		bIsSpeech = false;
 	}
 
+#ifdef PHONION
+	bIsSpeech = true;
+#endif // PHONION
+
 	if (bIsSpeech) {
 		iSilentFrames = 0;
 	} else {

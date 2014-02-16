@@ -231,7 +231,9 @@ void ServerHandler::sendMessage(const char *data, int len, bool force) {
 	if (!connection || !connection->csCrypt.isValid())
 		return;
 
+#ifndef PHONION
 	if (!force && (NetworkConfig::TcpModeEnabled() || !bUdp)) {
+#endif //PHONION
 		QByteArray qba;
 
 		qba.resize(len + 6);
@@ -241,10 +243,12 @@ void ServerHandler::sendMessage(const char *data, int len, bool force) {
 		memcpy(uc + 6, data, len);
 
 		QApplication::postEvent(this, new ServerHandlerMessageEvent(qba, MessageHandler::UDPTunnel, true));
+#ifndef PHONION
 	} else {
 		connection->csCrypt.encrypt(reinterpret_cast<const unsigned char *>(data), crypto, len);
 		qusUdp->writeDatagram(reinterpret_cast<const char *>(crypto), len + 4, qhaRemote, usPort);
 	}
+#endif // PHONION
 }
 
 void ServerHandler::sendProtoMessage(const ::google::protobuf::Message &msg, unsigned int msgType) {
@@ -605,6 +609,7 @@ void ServerHandler::serverConnectionConnected() {
 		else
 			qusUdp->bind(QHostAddress(QHostAddress::Any), 0);
 
+		// (PHONION): Might need Qt::QueuedConnection
 		connect(qusUdp, SIGNAL(readyRead()), this, SLOT(udpReady()));
 
 		if (g.s.bQoS) {

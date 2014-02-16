@@ -116,10 +116,12 @@ LoopUser::LoopUser() {
 }
 
 void LoopUser::addFrame(const QByteArray &packet) {
+#ifndef PHONION
 	if (DOUBLE_RAND < g.s.dPacketLoss) {
 		qWarning("Drop");
 		return;
 	}
+#endif // PHONION
 
 	{
 		QMutexLocker l(&qmLock);
