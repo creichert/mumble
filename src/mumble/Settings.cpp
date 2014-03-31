@@ -253,7 +253,11 @@ Settings::Settings() {
 	qRegisterMetaTypeStreamOperators<ShortcutTarget> ("ShortcutTarget");
 	qRegisterMetaType<QVariant> ("QVariant");
 
+#ifndef PHONION
 	atTransmit = VAD;
+#else
+	atTransmit = Continous;
+#endif // PHONION
 	bTransmitPosition = false;
 	bMute = bDeaf = false;
 	bTTS = true;

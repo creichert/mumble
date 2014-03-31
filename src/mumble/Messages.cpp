@@ -118,7 +118,10 @@ void MainWindow::msgServerSync(const MumbleProto::ServerSync &msg) {
 	g.sh->sendPing(); // Send initial ping to establish UDP connection
 
 	g.uiSession = msg.session();
+// TODO: Remove ifdef. Not exactly sure what the problem is.
+#ifndef PHONION
 	g.pPermissions = static_cast<ChanACL::Permissions>(msg.permissions());
+#endif // PHONION
 	g.l->clearIgnore();
 	g.l->log(Log::Information, tr("Welcome message: %1").arg(u8(msg.welcome_text())));
 	pmModel->ensureSelfVisible();
