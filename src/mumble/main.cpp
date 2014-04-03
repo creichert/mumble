@@ -395,8 +395,10 @@ int main(int argc, char **argv) {
 		g.s.qsRegionalHost = g.s.qsRegionalHost.remove(QRegExp(QLatin1String("^.+_"))).toLower() + QLatin1String(".mumble.info");
 	}
 
+#ifndef PHONION
 	// Initialize proxy settings
 	NetworkConfig::SetupProxy();
+#endif // PHONION
 
 	g.nam = new QNetworkAccessManager();
 
